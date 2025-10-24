@@ -6,9 +6,6 @@
   sharesdir,
   ...
 }:
-let
-  port = toString 8234;
-in
 {
   services.traefik = {
     enable = true;
@@ -24,7 +21,7 @@ in
       };
       services.syncthing.loadBalancer.servers = [
         {
-          url = "http://localhost:${port}";
+          url = "http://localhost:8384/";
         }
       ];
     };
