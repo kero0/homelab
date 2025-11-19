@@ -25,6 +25,9 @@
   };
   services.traefik = {
     enable = true;
+    environmentFiles = [
+      config.age.secrets.dns-pass.path
+    ];
     dynamicConfigOptions = {
       http = {
         middlewares = {
@@ -199,7 +202,7 @@
             storage = "/storage/configs/traefik/myresolver/acme.json";
             dnsChallenge = {
               provider = "duckdns";
-              delayBeforeCheck = 0;
+              propagation.delayBeforeChecks = 120;
             };
           };
         };
