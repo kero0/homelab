@@ -12,10 +12,13 @@
   inputs = {
     nixos.url = "github:kero0/nixos";
     authentik-nix.url = "github:nix-community/authentik-nix";
+    deploy-rs.url = "github:serokell/deploy-rs";
   };
   outputs =
     inputs@{
+      self,
       nixos,
+      deploy-rs,
       ...
     }:
     let
@@ -23,7 +26,7 @@
       inherit (nixos) mmodules umport;
     in
     {
-      inherit (nixos) formatter checks devShells;
+      inherit (nixos) formatter devShells;
       nixosConfigurations = {
         nasy =
           let
@@ -58,5 +61,20 @@
               };
           };
       };
+      deploy.nodes.nasy = {
+        hostname = "nasy";
+        profiles.system = {
+          sshUser = "kirolsb";
+          sshOpts = [
+            "-p"
+            "9639"
+          ];
+          remoteBuild = true;
+          user = "root";
+          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nasy;
+        };
+      };
+
+      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     };
 }
