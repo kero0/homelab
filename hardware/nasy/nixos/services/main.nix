@@ -30,6 +30,9 @@
   environment.systemPackages = with pkgs; [
     docker-compose
     podman-compose
+    slirp4netns
+    fuse-overlayfs
+    dig
   ];
   system.activationScripts.ensurePodmanVolumes.text =
     let
