@@ -34,7 +34,7 @@ in
     };
     samba = {
       enable = true;
-      package = pkgs.samba.override { enablePrinting = true; };
+      package = pkgs.samba;
       openFirewall = true;
       nmbd.enable = true;
       nsswins = true;
@@ -51,7 +51,7 @@ in
           "hosts deny" = "0.0.0.0/0";
           "guest account" = "nobody";
           "map to guest" = "Bad User";
-          "load printers" = "yes";
+          # "load printers" = "yes";
 
           # for time machine
           "vfs objects" = "fruit streams_xattr";
@@ -121,17 +121,17 @@ in
           "browseable" = "yes";
           "guest ok" = "no";
         };
-        printers = {
-          comment = "All Printers";
-          path = "/var/spool/samba";
-          public = "yes";
-          browseable = "yes";
-          # to allow user 'guest account' to print.
-          "guest ok" = "yes";
-          writable = "no";
-          printable = "yes";
-          "create mode" = 700;
-        };
+        # printers = {
+        #   comment = "All Printers";
+        #   path = "/var/spool/samba";
+        #   public = "yes";
+        #   browseable = "yes";
+        #   # to allow user 'guest account' to print.
+        #   "guest ok" = "yes";
+        #   writable = "no";
+        #   printable = "yes";
+        #   "create mode" = 700;
+        # };
       };
     };
   };

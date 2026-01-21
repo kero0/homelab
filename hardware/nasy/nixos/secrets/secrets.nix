@@ -10,6 +10,8 @@ let
 in
 {
   "dns-pass.age".publicKeys = keys;
-  "authentik-env.age".publicKeys = keys;
+  "lldap-env.age".publicKeys = keys;
+  "pocket-id-env.age".publicKeys = keys;
+  "tinyauth-env.age".publicKeys = keys;
   "vpn-pass.age".publicKeys = keys;
 }

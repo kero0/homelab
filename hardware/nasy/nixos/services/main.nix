@@ -3,6 +3,7 @@
   lib,
   config,
   genericServiceUser,
+  myuser,
   ...
 }:
 {
@@ -11,11 +12,16 @@
     configdir = "/storage/configs/";
     sharesdir = "/storage/Shares/";
   };
+  users.users."${myuser}".linger = true;
   networking.firewall.interfaces."podman+".allowedUDPPorts = [
     53
     5353
   ];
+  systemd.services.podman-restart.wantedBy = lib.mkIf config.virtualisation.podman.enable [
+    "default.target"
+  ];
   virtualisation = {
+    quadlet.enable = true;
     podman = {
       dockerSocket.enable = true;
       enable = true;
@@ -57,5 +63,4 @@
       ''))
       (concatStringsSep "\n")
     ];
-
 }

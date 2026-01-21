@@ -3,39 +3,57 @@
   lib,
   pkgs,
   configdir,
+  myuser,
   ...
 }:
 {
-  virtualisation.oci-containers.containers.vpn = {
-    image = "docker.io/qmcgaw/gluetun:latest";
-    environment = {
-      "PGID" = "${toString config.users.groups.services.gid}";
-      "PUID" = "${toString config.users.users.serviceuser.uid}";
-      "TZ" = config.time.timeZone;
-      "VPN_SERVICE_PROVIDER" = "nordvpn";
-      "VPN_TYPE" = "wireguard";
+  age.secrets.vpn-pass = {
+    mode = "444";
+  };
+  virtualisation.quadlet.containers.vpn = {
+    autoStart = true;
+    serviceConfig = {
+      Restart = "always";
     };
-    environmentFiles = [
-      config.age.secrets.vpn-pass.path
-    ];
-    volumes = [
-      "${configdir}/gluetun:/gluetun:rw"
-    ];
-    ports = [
-      "6881:6881/tcp"
-      "6881:6881/udp"
-    ];
-    labels = {
-      "traefik.enable" = "false";
+    containerConfig = {
+      image = "docker.io/qmcgaw/gluetun:latest";
+
+      publishPorts = [
+        "6881:6881/tcp"
+        "6881:6881/udp"
+      ];
+
+      volumes = [
+        "${configdir}/gluetun:/gluetun:rw"
+      ];
+
+      environments = {
+        "PGID" = "${toString config.users.groups.services.gid}";
+        "PUID" = "${toString config.users.users.serviceuser.uid}";
+        "TZ" = config.time.timeZone;
+        "VPN_SERVICE_PROVIDER" = "nordvpn";
+        "VPN_TYPE" = "wireguard";
+      };
+      environmentFiles = [
+        config.age.secrets.vpn-pass.path
+      ];
+
+      labels = {
+        "traefik.enable" = "false";
+      };
+
+      addCapabilities = [
+        "NET_ADMIN"
+      ];
+
+      devices = [
+        "/dev/net/tun:/dev/net/tun:rwm"
+      ];
+
+      addHosts = [
+        "host.docker.internal:host-gateway"
+      ];
+      logDriver = "journald";
     };
-    log-driver = "journald";
-    capabilities = {
-      NET_ADMIN = true;
-    };
-    extraOptions = [
-      "--add-host=host.docker.internal:host-gateway"
-      "--cap-add=NET_ADMIN"
-      "--device=/dev/net/tun:/dev/net/tun:rwm"
-    ];
   };
 }

@@ -3,6 +3,7 @@
   lib,
   pkgs,
   mainaddr,
+  configdir,
   ...
 }:
 {
@@ -45,8 +46,8 @@
             middlewares = [ "homeassistant-addHost" ];
             service = "homeassistant";
             entryPoints = [
-              "web"
-              "websecure"
+              "http"
+              "https"
             ];
             tls = { };
           };
@@ -54,8 +55,8 @@
             rule = "Host(`traefik.${mainaddr}`)";
             service = "traefik";
             entryPoints = [
-              "web"
-              "websecure"
+              "http"
+              "https"
             ];
             tls = { };
           };
@@ -89,12 +90,12 @@
         insecure = true;
       };
       entryPoints = {
-        web = {
+        http = {
           address = ":80";
           http = {
             redirections = {
               entryPoint = {
-                to = "websecure";
+                to = "https";
                 scheme = "https";
                 permanent = true;
               };
@@ -103,6 +104,7 @@
           forwardedHeaders = {
             trustedIPs = [
               "10.0.0.0/8"
+              "127.0.0.1/32"
               "172.16.0.0/12"
               "192.168.0.0/16"
               "fc00::/7"
@@ -111,13 +113,14 @@
           proxyProtocol = {
             trustedIPs = [
               "10.0.0.0/8"
+              "127.0.0.1/32"
               "172.16.0.0/12"
               "192.168.0.0/16"
               "fc00::/7"
             ];
           };
         };
-        websecure = {
+        https = {
           address = ":443";
           http = {
             tls = {
@@ -149,44 +152,6 @@
             insecure = false;
           };
         };
-        http = {
-          forwardedHeaders = {
-            trustedIPs = [
-              "10.0.0.0/8"
-              "172.16.0.0/12"
-              "192.168.0.0/16"
-              "fc00::/7"
-            ];
-          };
-          proxyProtocol = {
-            trustedIPs = [
-              "10.0.0.0/8"
-              "172.16.0.0/12"
-              "192.168.0.0/16"
-              "fc00::/7"
-            ];
-          };
-        };
-        https = {
-          forwardedHeaders = {
-            trustedIPs = [
-              "10.0.0.0/8"
-              "172.16.0.0/12"
-              "192.168.0.0/16"
-              "fc00::/7"
-            ];
-            insecure = false;
-          };
-          proxyProtocol = {
-            trustedIPs = [
-              "10.0.0.0/8"
-              "172.16.0.0/12"
-              "192.168.0.0/16"
-              "fc00::/7"
-            ];
-            insecure = false;
-          };
-        };
       };
       providers = {
         docker = {
@@ -199,7 +164,7 @@
         myresolver = {
           acme = {
             email = "kirolsb5@gmail.com";
-            storage = "/storage/configs/traefik/myresolver/acme.json";
+            storage = "${configdir}/traefik/myresolver/acme.json";
             dnsChallenge = {
               provider = "duckdns";
               propagation.delayBeforeChecks = 120;

@@ -13,12 +13,14 @@
     nixos.url = "github:kero0/nixos";
     authentik-nix.url = "github:nix-community/authentik-nix";
     deploy-rs.url = "github:serokell/deploy-rs";
+    quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
   };
   outputs =
     inputs@{
       self,
       nixos,
       deploy-rs,
+      quadlet-nix,
       ...
     }:
     let
@@ -26,7 +28,7 @@
       inherit (nixos) mmodules umport;
     in
     {
-      inherit (nixos) formatter devShells;
+      inherit (nixos) formatter;
       nixosConfigurations = {
         nasy =
           let
@@ -46,6 +48,7 @@
                 nixos-hardware.nixosModules.common-cpu-intel
                 nixos-hardware.nixosModules.common-pc
                 nixos-hardware.nixosModules.common-pc-ssd
+                quadlet-nix.nixosModules.quadlet
                 lanzaboote.nixosModules.lanzaboote
 
                 inputs.authentik-nix.nixosModules.default
@@ -61,6 +64,26 @@
               };
           };
       };
+
+      devShells =
+        let
+          inherit (builtins) mapAttrs;
+          inherit (nixos) devShells;
+          inherit (nixpkgs.lib) mapAttrs' nameValuePair;
+        in
+        mapAttrs' (
+          name: value:
+          let
+            pkgs = import nixpkgs { system = name; };
+          in
+          nameValuePair name {
+            default = pkgs.mkShell {
+              packages = [ pkgs.deploy-rs ];
+              inputsFrom = [ value.default ];
+            };
+          }
+        ) devShells;
+
       deploy.nodes.nasy = {
         hostname = "nasy";
         profiles.system = {

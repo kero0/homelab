@@ -2,6 +2,7 @@
   config,
   lib,
   genericServiceUser,
+  pkgs,
   ...
 }:
 {
@@ -68,4 +69,5 @@
     };
     xserver.xkb.layout = "us";
   };
+  environment.systemPackages = with pkgs; [ vim ];
 }
