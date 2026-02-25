@@ -23,6 +23,7 @@ in
       containerConfig =
         let
           WEBUI_PORT = "8130";
+          domain = "torrent.${mainaddr}";
         in
         {
           image = "docker.io/linuxserver/qbittorrent:latest";
@@ -42,11 +43,8 @@ in
           ];
           labels = {
             "traefik.docker.network" = "vpn";
-            "traefik.http.routers.qbittorrent.rule" = "Host(`torrent.${mainaddr}`)";
+            "traefik.http.routers.qbittorrent.rule" = "Host(`${domain}`)";
             "traefik.http.services.qbittorrent.loadbalancer.server.port" = WEBUI_PORT;
-            "traefik.http.routers.qbittorrent.middlewares" = "tinyauth";
-            "tinyauth.apps.torrent.ip.bypass" = "10.88.0.0/16";
-            "tinyauth.apps.torrent.oauth.groups" = "secondary";
           };
           logDriver = "journald";
           networks = [

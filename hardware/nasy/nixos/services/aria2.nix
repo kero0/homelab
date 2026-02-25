@@ -79,8 +79,6 @@ in
         "traefik.docker.network" = "vpn";
         "traefik.http.routers.ariang.rule" = "Host(`downloader.${mainaddr}`)";
         "traefik.http.services.ariang.loadbalancer.server.port" = "80";
-        "traefik.http.routers.ariang.middlewares" = "tinyauth";
-        "tinyauth.apps.downloader.oauth.groups" = "main";
       };
       logDriver = "journald";
       networks = [
