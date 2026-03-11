@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }:
@@ -15,7 +14,7 @@
       nvidiaPersistenced = true;
 
       # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
-      powerManagement.enable = true;
+      powerManagement.enable = false;
       # Fine-grained power management. Turns off GPU when not in use.
       # Experimental and only works on modern Nvidia GPUs (Turing or newer).
       powerManagement.finegrained = false;
@@ -34,6 +33,9 @@
       package = config.boot.kernelPackages.nvidiaPackages.production;
     };
   };
+  environment.systemPackages = with pkgs; [
+    cudaPackages.cudatoolkit
+  ];
 
   services.xserver = {
     enable = true;
