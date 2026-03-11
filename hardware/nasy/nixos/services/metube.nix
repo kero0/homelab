@@ -1,7 +1,5 @@
 {
-  lib,
   config,
-  mainaddr,
   configdir,
   sharesdir,
   ...
@@ -46,6 +44,7 @@ in
         "traefik.http.services.metube.loadbalancer.server.port" = "8081";
         "traefik.http.routers.metube.middlewares" = "tinyauth";
         "tinyauth.apps.metube.oauth.groups" = "tertiary";
+        "tinyauth.apps.metube.path.allow" = ''^\/add'';
       };
       logDriver = "journald";
       networks = [
