@@ -69,5 +69,8 @@
     };
     xserver.xkb.layout = "us";
   };
-  environment.systemPackages = with pkgs; [ vim ];
+  environment.systemPackages = with pkgs; [
+    ani-cli
+    vim
+  ];
 }
