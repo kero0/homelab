@@ -1,8 +1,13 @@
 name: "OS build check"
+permissions:
+  contents: write
+  pull-requests: write
 on:
   workflow_dispatch:
   pull_request:
   push:
+    branches:
+      - main
 jobs:
   build-check:
     strategy:
@@ -11,13 +16,14 @@ jobs:
         include:
           - target: nixosConfigurations.nasy.config.system.path
             os: ubuntu-latest
+            free-space: true
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@900f2210b1d28bbbd0bd22d17926b9e224e8f231
       - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@v1.3.1
-        if: runner.os == 'Linux'
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be
+        if: ${{ matrix.free-space }}
         with:
           # this might remove tools that are actually needed,
           # if set to "true" but frees about 6 GB
@@ -32,10 +38,16 @@ jobs:
           docker-images: true
           swap-storage: true
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v19
+        uses: DeterminateSystems/nix-installer-action@00199f951aeb9404028a6e4b95ad42546f73296a
         with:
           extra-conf: |
             extra-experimental-features = flakes nix-command recursive-nix pipe-operators
+      - uses: cachix/cachix-action@5f2d7c5294214f71b873db4b969586b980625e71
+        with:
+          name: kero0
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          extraPullNames: nix-community
+          pushFilter: '(-source$|\.tar\.gz$|\.xz$|\.zip$|\.iso$|\.img$)'
       - name: Check OS build
         shell: bash
         run: |
@@ -43,18 +55,54 @@ jobs:
       - name: Diff profile
         id: diff
         run: |
-          echo "# ${{ matrix.target }} changes" > message-body
-          nix store diff-closures --accept-flake-config --derivation \
-              "github:${{ github.repository }}/${{ github.event.before }}#${{ matrix.target }}" \
-              ".#${{ matrix.target }}" | sed 's/\x1b\[[0-9;]*m//g' >> message-body
-      - name: Comment PR
-        uses: peter-evans/create-or-update-comment@v4
+          {
+            echo 'body<<EOF'
+            echo "# ${{ matrix.target }} changes"
+
+            nix store diff-closures --accept-flake-config --derivation \
+                "github:${{ github.repository }}/${{ github.event.before }}#${{ matrix.target }}" \
+                ".#${{ matrix.target }}" | sed 's/\x1b\[[0-9;]*m//g'
+
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+      - name: Comment on PR
         if: github.event_name == 'pull_request'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         with:
-          body-path: message-body
-          issue-number: ${{ github.event.pull_request.number }}
-      - name: Comment Commit
-        uses: peter-evans/commit-comment@v3
+          script: |
+            const body = `${{ steps.diff.outputs.body }}`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
+
+      - name: Comment on commit
         if: github.event_name == 'push'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         with:
-          body-path: message-body
+          script: |
+            const body = `${{ steps.diff.outputs.body }}`;
+
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body
+            });
+
+  builds-passed:
+    name: All builds succeeded
+    needs: build-check
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check test results
+        run: |
+          if [ "${{ needs.build-check.result }}" != "success" ]; then
+            echo "Some tests failed"
+            exit 1
+          fi
+          echo "All tests passed"
