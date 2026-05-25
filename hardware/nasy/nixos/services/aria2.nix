@@ -11,9 +11,28 @@ let
   inherit (config.virtualisation.quadlet)
     containers
     builds
-    networks
-    pods
     ;
+  mkContainer = lib.recursiveUpdate {
+    unitConfig = {
+      Requires = [ containers.vpn.ref ];
+      After = [ containers.vpn.ref ];
+    };
+    containerConfig = {
+      environments = {
+        TZ = config.time.timeZone;
+      };
+      autoUpdate = "registry";
+      logDriver = "journald";
+      networks = [
+        "container:vpn"
+      ];
+      labels."traefik.docker.network" = "vpn";
+    };
+    serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = "30s";
+    };
+  };
 in
 {
   virtualisation.quadlet = {
@@ -23,67 +42,33 @@ in
         RUN apk update && apk add --no-cache --update aria2
         ENTRYPOINT [ "aria2c", "--conf-path=/config/aria2.conf" ]
       '').outPath;
-    containers.aria2.containerConfig = {
-      image = builds.aria2.ref;
-      environments = {
-        TZ = config.time.timeZone;
-      };
-      volumes = [
-        "${sharesdir}/Downloads:/downloads:rw"
-        "${sharesdir}/Games:/games:rw"
-        "${sharesdir}/Movies:/movies:rw"
-        "${sharesdir}/Other:/other:rw"
-        "${sharesdir}/TV:/tv:rw"
-        "${configdir}/aria2-config:/config:rw"
-      ];
-      labels = {
-        "traefik.docker.network" = "vpn";
-        "traefik.http.services.aria2.loadbalancer.server.port" = "6800";
-      };
-      logDriver = "journald";
-      networks = [
-        "container:vpn"
-      ];
-    };
-
-    containers.ariang.containerConfig = {
-      image = "docker.io/library/nginx:latest";
-      volumes =
-        let
-          src' = builtins.fetchurl {
-            url = "https://github.com/mayswind/AriaNg/releases/download/1.3.11/AriaNg-1.3.11-AllInOne.zip";
-            sha256 = "0ax4l3ya62jw657qwvcrjqizkj6344syf94m61z5rwv1d0b87gmk";
+    containers = {
+      aria2 = mkContainer {
+        containerConfig = {
+          image = builds.aria2.ref;
+          volumes = [
+            "${sharesdir}/Downloads:/downloads:rw"
+            "${sharesdir}/Games:/games:rw"
+            "${sharesdir}/Movies:/movies:rw"
+            "${sharesdir}/Other:/other:rw"
+            "${sharesdir}/TV:/tv:rw"
+            "${configdir}/aria2-config:/config:rw"
+          ];
+          labels = {
+            "traefik.http.services.aria2.loadbalancer.server.port" = "6800";
           };
-          src = pkgs.runCommand "ariang-src" { } ''
-            mkdir -p $out
-            ${pkgs.unzip}/bin/unzip ${src'} -d $out
-          '';
-          conf = pkgs.writeText "nginx.conf" ''
-            user nginx nginx;
-            daemon off;
-            events {}
-            http {
-              server {
-                listen 80;
-                location / {
-                  root /app/;
-                }
-              }
-            }
-          '';
-        in
-        [
-          "${src}:/usr/share/nginx/html:ro"
-        ];
-      labels = {
-        "traefik.docker.network" = "vpn";
-        "traefik.http.routers.ariang.rule" = "Host(`downloader.${mainaddr}`)";
-        "traefik.http.services.ariang.loadbalancer.server.port" = "80";
+        };
       };
-      logDriver = "journald";
-      networks = [
-        "container:vpn"
-      ];
+      ariang = mkContainer {
+        containerConfig = {
+          image = "docker.io/library/nginx:latest";
+          volumes = [ "${pkgs.ariang}/share/ariang:/usr/share/nginx/html:ro" ];
+          labels = {
+            "traefik.http.routers.ariang.rule" = "Host(`downloader.${mainaddr}`)";
+            "traefik.http.services.ariang.loadbalancer.server.port" = "80";
+          };
+        };
+      };
     };
   };
 }
