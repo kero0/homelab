@@ -18,7 +18,7 @@ jobs:
             extra-experimental-features = flakes nix-command recursive-nix pipe-operators
       - name: Update flake.lock
         id: update
-        uses: DeterminateSystems/update-flake-lock@v23
+        uses: DeterminateSystems/update-flake-lock@v28
       - name: Print PR number
         run: echo Pull request number is ${{ steps.update.outputs.pull-request-number }}.
       - name: Enable auto merge created PR
