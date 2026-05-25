@@ -7,11 +7,18 @@ let
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJjBjMCLeF3MFJ1QhGanv1eygzYUJjMJ2EsuhQuw1Wpk"
     "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDnLkCz4XgliaLd8NAjR6X60+aZ1CWtXVyZpAMwfWpf4MTCFr5IuS2Byp1LNZL9QFqj3xWIRFhkCmOML/mrx6Ytu0ZDM6ZeG6sJDlmC1sbIKxMFaLaMO5eFdubJAmkxU8wTRss1JE5l7SJEeTm7S+golCUxzAk6JD7Mvx1FkQkwmKCr99QiN8korNHh62DpZ47mgJpDFV82LFoc/uNC7NHZqVDqc2m1ZUIJVqllpyZOtiQMwJPoBKNdfGYYyr13nXfZtrgHbRr7gugcGuupL9uHBXMnYllfXsFUg3m20xOiR8AlmnByoZTMJWqoPn2kXal0x5KFnFtUbW3RjUfJgsq6x5h+mdirhb7lMxHoYuEa7nUCitYbK1utt/BqWdd4QqHAgOdKCusSK1ycZt5xZjECee9oky80uGhzwYliA6ONOwegUZ3O6Ptu2UDeUNL3tkZtPDbFBBMafnNwBRxp/qcy77vTmS3ZjNa/Q7/F91E/AeYzHr7zCgbA0x18xehweac="
   ];
+  files = [
+    "dns-pass.age"
+    "immich-config.age"
+    "immich-test-config.age"
+    "lldap-env.age"
+    "ntfy-env.age"
+    "ntfy-default-pass.age"
+    "pocket-id-env.age"
+    "tinyauth-env.age"
+    "vpn-pass.age"
+    "warracker-env.age"
+  ];
+  inherit (builtins) foldl';
 in
-{
-  "dns-pass.age".publicKeys = keys;
-  "lldap-env.age".publicKeys = keys;
-  "pocket-id-env.age".publicKeys = keys;
-  "tinyauth-env.age".publicKeys = keys;
-  "vpn-pass.age".publicKeys = keys;
-}
+foldl' (acc: x: acc // { "${x}".publicKeys = keys; }) { } files
