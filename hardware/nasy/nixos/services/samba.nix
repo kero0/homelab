@@ -1,18 +1,14 @@
 {
   config,
-  lib,
   pkgs,
-  stable,
   genericServiceUser,
+  sharesdir,
   ...
 }:
-let
-  sharepath = "/storage/Shares";
-in
 {
   networking.firewall.allowPing = true;
   users.users = {
-    tootsie = {
+    mini = {
       group = "samba";
       isNormalUser = true;
       extraGroups = [ genericServiceUser.group ];
@@ -51,7 +47,6 @@ in
           "hosts deny" = "0.0.0.0/0";
           "guest account" = "nobody";
           "map to guest" = "Bad User";
-          # "load printers" = "yes";
 
           # for time machine
           "vfs objects" = "fruit streams_xattr";
@@ -76,7 +71,7 @@ in
           "inherit permissions" = "yes";
         };
         Downloads = {
-          path = "${sharepath}/Downloads";
+          path = "${sharesdir}/Downloads";
           "read only" = "yes";
           browseable = "yes";
           "guest ok" = "yes";
@@ -87,7 +82,7 @@ in
           "force group" = "users";
         };
         Storage = {
-          "path" = "${sharepath}/All";
+          "path" = "${sharesdir}/All";
           browseable = "yes";
           "read only" = "no";
           writeable = "yes";
@@ -100,20 +95,20 @@ in
           "force group" = "users";
         };
         Games = {
-          "path" = "${sharepath}/Games";
+          "path" = "${sharesdir}/Games";
           browseable = "yes";
           "guest ok" = "yes";
           "create mask" = "0644";
           "directory mask" = "0755";
           "fruit:veto_appledouble" = "yes";
         };
-        Timemachines = {
-          "path" = "${sharepath}/Timemachines";
+        Timemachine = {
+          "path" = "${sharesdir}/Timemachine";
           "valid users" = "kirolsbakheat";
           public = "no";
           writeable = "yes";
 
-          "vfs objects" = "fruit streams_xattr";
+          "vfs objects" = "catia fruit streams_xattr";
           "fruit:time machine" = "yes";
           "fruit:time machine max size" = "500G";
           "comment" = "Time Machine Backup";
@@ -121,17 +116,6 @@ in
           "browseable" = "yes";
           "guest ok" = "no";
         };
-        # printers = {
-        #   comment = "All Printers";
-        #   path = "/var/spool/samba";
-        #   public = "yes";
-        #   browseable = "yes";
-        #   # to allow user 'guest account' to print.
-        #   "guest ok" = "yes";
-        #   writable = "no";
-        #   printable = "yes";
-        #   "create mode" = 700;
-        # };
       };
     };
   };
