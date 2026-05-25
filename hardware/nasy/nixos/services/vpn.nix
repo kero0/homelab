@@ -1,9 +1,7 @@
 {
   config,
   lib,
-  pkgs,
   configdir,
-  myuser,
   ...
 }:
 {
@@ -44,6 +42,7 @@
 
       addCapabilities = [
         "NET_ADMIN"
+        "NET_RAW"
       ];
 
       devices = [
@@ -52,7 +51,10 @@
 
       addHosts = [
         "host.docker.internal:host-gateway"
-      ];
+      ]
+      ++ lib.optional config.services.ntfy-sh.enable (
+        lib.removePrefix "https://" config.services.ntfy-sh.settings.base-url + ":host-gateway"
+      );
       logDriver = "journald";
     };
   };

@@ -14,22 +14,20 @@
       auth_enabled = false;
 
       server = {
-        http_listen_port = 3100;
+        http_listen_port = 31300;
         grpc_listen_port = 9123;
       };
-      ingester = {
+      ingester = rec {
         lifecycler = {
           address = "127.0.0.1";
           ring = {
-            kvstore = {
-              store = "inmemory";
-            };
+            kvstore.store = "inmemory";
             replication_factor = 1;
           };
         };
-        chunk_idle_period = "1h";
+        chunk_idle_period = max_chunk_age;
         max_chunk_age = "1h";
-        chunk_target_size = 999999;
+        chunk_target_size = 1 * 1024 * 1024;
         chunk_retain_period = "30s";
       };
       common = {
@@ -71,11 +69,7 @@
       };
       compactor = {
         working_directory = config.services.loki.dataDir;
-        compactor_ring = {
-          kvstore = {
-            store = "inmemory";
-          };
-        };
+        compactor_ring.kvstore.store = "inmemory";
       };
     };
   };
