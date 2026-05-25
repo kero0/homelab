@@ -469,11 +469,11 @@
         "tmux-ssh-split": "tmux-ssh-split"
       },
       "locked": {
-        "lastModified": 1779493732,
-        "narHash": "sha256-6S0HZUjozCiNpJ8S2kPeV0bomyk4UdKZm5xInE3ABN4=",
+        "lastModified": 1779679976,
+        "narHash": "sha256-2Tw9KACYCmSJ150s3oWKWt96WhBkgGXZo53PgPh381g=",
         "owner": "kero0",
         "repo": "nixos",
-        "rev": "2df55b027d20827f78cca2463b8174dbce7e18b8",
+        "rev": "14eb7484cb1a8cbb46e11c6cdd99761522314e6d",
         "type": "github"
       },
       "original": {
@@ -667,11 +667,11 @@
     },
     "quadlet-nix": {
       "locked": {
-        "lastModified": 1778430078,
-        "narHash": "sha256-IKv4iqSoZaOthKfXOEYK0IPU/tvybn1GqvUtuDd0SNc=",
+        "lastModified": 1779658505,
+        "narHash": "sha256-hbVBnj18VyoFRNE5mKzYeKRat/INBxnIEIIATfF1JsA=",
         "owner": "SEIAROTg",
         "repo": "quadlet-nix",
-        "rev": "5c325f2c9165aefb82a9da5b0352a66e0e1f5287",
+        "rev": "d536933bf89334bf9ccb036e84131793712965b1",
         "type": "github"
       },
       "original": {
