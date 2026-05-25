@@ -14,7 +14,7 @@
 
   security.unprivilegedUsernsClone = true;
   boot = {
-    kernelPackages = pkgs.linuxKernel.packages.linux_hardened;
+    kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_stable;
     loader.systemd-boot.enable = true;
     initrd = {
       availableKernelModules = [

@@ -10,13 +10,16 @@
     ];
   };
   inputs = {
-    nixos.url = "github:kero0/nixos";
-    authentik-nix.url = "github:nix-community/authentik-nix";
+    nixos = {
+      url = "github:kero0/nixos";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixpkgs.url = "github:NixOS/nixpkgs";
     deploy-rs.url = "github:serokell/deploy-rs";
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
   };
   outputs =
-    inputs@{
+    {
       self,
       nixos,
       deploy-rs,
@@ -51,7 +54,6 @@
                 quadlet-nix.nixosModules.quadlet
                 lanzaboote.nixosModules.lanzaboote
 
-                inputs.authentik-nix.nixosModules.default
                 {
                   home-manager.users.${myuser}.imports = umport {
                     ipath = ./hardware/nasy/home;
@@ -67,7 +69,6 @@
 
       devShells =
         let
-          inherit (builtins) mapAttrs;
           inherit (nixos) devShells;
           inherit (nixpkgs.lib) mapAttrs' nameValuePair;
         in
@@ -98,6 +99,6 @@
         };
       };
 
-      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+      checks = builtins.mapAttrs (_: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     };
 }
