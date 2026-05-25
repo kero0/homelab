@@ -469,11 +469,11 @@
         "tmux-ssh-split": "tmux-ssh-split"
       },
       "locked": {
-        "lastModified": 1779493732,
-        "narHash": "sha256-6S0HZUjozCiNpJ8S2kPeV0bomyk4UdKZm5xInE3ABN4=",
+        "lastModified": 1779679976,
+        "narHash": "sha256-2Tw9KACYCmSJ150s3oWKWt96WhBkgGXZo53PgPh381g=",
         "owner": "kero0",
         "repo": "nixos",
-        "rev": "2df55b027d20827f78cca2463b8174dbce7e18b8",
+        "rev": "14eb7484cb1a8cbb46e11c6cdd99761522314e6d",
         "type": "github"
       },
       "original": {
