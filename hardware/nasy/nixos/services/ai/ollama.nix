@@ -10,8 +10,8 @@
     host = "127.0.0.1";
     package = pkgs.ollama-vulkan;
     loadModels = [
-      "mistral:7b"
-      "qwen3.5:9b"
+      "gemma4:e4b"
+      "gemma4:e2b"
       "qwen3.5:4b"
     ];
     models = "${sharesdir}/models";
