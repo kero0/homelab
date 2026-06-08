@@ -17,6 +17,9 @@ jobs:
           - target: nixosConfigurations.nasy.config.system.path
             os: ubuntu-latest
             free-space: true
+          - target: nixosConfigurations.backy.config.system.path
+            os: ubuntu-latest
+            free-space: true
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
