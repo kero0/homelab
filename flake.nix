@@ -27,7 +27,12 @@
       ...
     }:
     let
-      inherit (nixos.inputs) nixpkgs nixos-hardware lanzaboote;
+      inherit (nixos.inputs)
+        disko
+        nixpkgs
+        nixos-hardware
+        lanzaboote
+        ;
       inherit (nixos) mmodules umport;
     in
     {
@@ -65,7 +70,47 @@
                 exclude = [ ".*/secrets.nix" ];
               };
           };
+        backy =
+          let
+            myuser = "kirolsb";
+            system = "x86_64-linux";
+            hostname = "backy";
+          in
+          nixpkgs.lib.nixosSystem {
+            modules =
+              mmodules {
+                inherit hostname myuser system;
+                exclude = [ ".*/secrets.nix" ];
+                age = false;
+                defaultsecrets = false;
+              }
+              ++ [
+                disko.nixosModules.disko
+                {
+                  networking.hostId = "c2a42322";
+                  disko.devices.disk = {
+                    storagefs.device = "/dev/xvdb";
+                    rootfs.device = "/dev/xvda";
+                  };
+                }
+                {
+                  home-manager.users.${myuser}.imports = umport {
+                    ipath = ./hardware/nasy/home;
+                  };
+                }
+              ]
+              ++ umport {
+                ipath = ./hardware/backy/nixos;
+                exclude = [ ".*/secrets.nix" ];
+              };
+          };
       };
+      vms = nixpkgs.lib.attrsets.concatMapAttrs (host: config: {
+        ${host} = config.pkgs.writeShellScriptBin "${host}" ''
+          [ -z "$QEMU_NET_OPTS" ] && export QEMU_NET_OPTS="hostfwd=tcp::2221-:22"
+          exec ${config.config.system.build.vmWithBootLoader}/bin/run-${host}-vm "$@"
+        '';
+      }) self.nixosConfigurations;
 
       devShells =
         let
@@ -85,17 +130,33 @@
           }
         ) devShells;
 
-      deploy.nodes.nasy = {
-        hostname = "nasy";
-        profiles.system = {
-          sshUser = "kirolsb";
-          sshOpts = [
-            "-p"
-            "9639"
-          ];
-          remoteBuild = true;
-          user = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nasy;
+      deploy.nodes = {
+        nasy = {
+          hostname = "nasy";
+          profiles.system = {
+            sshUser = "kirolsb";
+            sshOpts = [
+              "-p"
+              "9639"
+            ];
+            remoteBuild = true;
+            user = "root";
+            path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nasy;
+          };
+        };
+        backy = {
+          hostname = "backy";
+          profiles.system = {
+            sshUser = "root";
+            sshOpts = [
+              "-p"
+              "9639"
+            ];
+            remoteBuild = false;
+            localBuild = true;
+            user = "root";
+            path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.backy;
+          };
         };
       };
 
