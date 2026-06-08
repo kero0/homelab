@@ -51,6 +51,17 @@ let
   };
 in
 {
+  my.backup-shares = [ "Immich" ];
+  age = {
+    secrets.immich-config = {
+      owner = config.users.users.serviceuser.name;
+      group = config.users.groups.services.name;
+    };
+    secrets.immich-test-config = {
+      owner = config.users.users.serviceuser.name;
+      group = config.users.groups.services.name;
+    };
+  };
   virtualisation.quadlet = {
     networks.immich = { };
     networks.immich-test = { };

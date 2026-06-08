@@ -6,6 +6,7 @@
   ...
 }:
 {
+  my.backup-shares = [ "Timemachine" ];
   networking.firewall.allowPing = true;
   users.users = {
     mini = {

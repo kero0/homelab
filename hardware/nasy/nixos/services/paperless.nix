@@ -23,6 +23,7 @@ in
     "force user" = genericServiceUser.name;
     "force group" = genericServiceUser.group;
   };
+  my.backup-shares = [ "Paperless" ];
   virtualisation.quadlet = {
     volumes = {
       paperless-broker = { };

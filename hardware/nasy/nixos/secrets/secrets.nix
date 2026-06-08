@@ -15,6 +15,7 @@ let
     "ntfy-env.age"
     "ntfy-default-pass.age"
     "pocket-id-env.age"
+    "syncoid-key.age"
     "tinyauth-env.age"
     "vpn-pass.age"
     "warracker-env.age"

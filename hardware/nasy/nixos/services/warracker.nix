@@ -22,6 +22,7 @@ in
     "force user" = genericServiceUser.name;
     "force group" = genericServiceUser.group;
   };
+  my.backup-shares = [ "Warracker" ];
   virtualisation.quadlet = {
     volumes = {
       warracker-db = { };
