@@ -41,7 +41,7 @@ jobs:
           docker-images: true
           swap-storage: true
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@00199f951aeb9404028a6e4b95ad42546f73296a
+        uses: DeterminateSystems/nix-installer-action@1d87d45818068401a10cf16bdc5f00b24994a83f
         with:
           extra-conf: |
             extra-experimental-features = flakes nix-command recursive-nix pipe-operators
