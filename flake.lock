@@ -400,11 +400,11 @@
         "tmux-ssh-split": "tmux-ssh-split"
       },
       "locked": {
-        "lastModified": 1784946028,
-        "narHash": "sha256-wN8a8aM2FSvKjDobT0aAMIIy6FXjH/ocHRgynVf8OOs=",
+        "lastModified": 1785206494,
+        "narHash": "sha256-82ioP2PnATOMb6pLbSCkGzdvJIr++eX5l1wWdEOwG5s=",
         "owner": "kero0",
         "repo": "nixos",
-        "rev": "b6ba66acd35eb75126be2ba28d348535ea591d4b",
+        "rev": "f0ab9e99952bd6a3301823d8dda1e60a04dffa54",
         "type": "github"
       },
       "original": {
