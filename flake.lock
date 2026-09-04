@@ -112,11 +112,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1786361680,
-        "narHash": "sha256-IxaZkb9rCGEZ+yGndxKXONeIEcKMzoFUsvLTB5G/caw=",
+        "lastModified": 1788271056,
+        "narHash": "sha256-LISF6pdADVdxdBOQU459xkzKIHdeDzLR27b7zLYGxYw=",
         "owner": "serokell",
         "repo": "deploy-rs",
-        "rev": "16901271e5b30b591e56f7a84f25f186fb20f3e1",
+        "rev": "c7890645c660f3789cc8f616c5db407766f91507",
         "type": "github"
       },
       "original": {
