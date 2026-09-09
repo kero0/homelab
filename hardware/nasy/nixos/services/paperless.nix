@@ -1,9 +1,9 @@
 {
-  lib,
   config,
   mainaddr,
   sharesdir,
   genericServiceUser,
+  mkTraefikLabels,
   ...
 }:
 let
@@ -24,6 +24,9 @@ in
     "force group" = genericServiceUser.group;
   };
   my.backup-shares = [ "Paperless" ];
+  age.secrets.paperless-env = {
+    owner = config.users.users.serviceuser.name;
+  };
   virtualisation.quadlet = {
     volumes = {
       paperless-broker = { };
@@ -85,6 +88,9 @@ in
             PAPERLESS_HTTP_REMOTE_USER_HEADER_NAME = "HTTP_REMOTE_USER";
             PAPERLESS_DISABLE_REGULAR_LOGIN = "true";
           };
+          environmentFiles = [
+            config.age.secrets.paperless-env.path
+          ];
           volumes = [
             "${sharesdir}/Paperless/data:/usr/src/paperless/data"
             "${sharesdir}/Paperless/media:/usr/src/paperless/media"
@@ -92,11 +98,11 @@ in
             "${sharesdir}/Paperless/consume:/usr/src/paperless/consume"
           ];
           user = "${toString config.users.users.serviceuser.uid}:${toString config.users.groups.services.gid}";
-          labels = {
-            "traefik.http.routers.paperless.rule" = "Host(`${url}`)";
-            "traefik.http.services.paperless.loadbalancer.server.port" = "8000";
-            "traefik.http.routers.paperless.middlewares" = "tinyauth";
-            "tinyauth.apps.${subdomain}.oauth.groups" = lib.mkIf (containers ? tinyauth) "documents";
+          labels = mkTraefikLabels {
+            inherit subdomain;
+            port = 8000;
+            oauth-groups = "documents";
+            public = true;
           };
         };
       };

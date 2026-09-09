@@ -30,6 +30,26 @@
         "type": "github"
       }
     },
+    "calendar-display": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786928005,
+        "narHash": "sha256-esoXDRkUnJl9M+sRSS6MZZraV1Iem2uzfu6V3JVJLoM=",
+        "owner": "kero0",
+        "repo": "calendar-display",
+        "rev": "1b5334950567337eda40d518dfd65e844651d113",
+        "type": "github"
+      },
+      "original": {
+        "owner": "kero0",
+        "repo": "calendar-display",
+        "type": "github"
+      }
+    },
     "catppuccin": {
       "inputs": {
         "nixpkgs": "nixpkgs_2"
@@ -642,6 +662,7 @@
     },
     "root": {
       "inputs": {
+        "calendar-display": "calendar-display",
         "deploy-rs": "deploy-rs",
         "nixos": "nixos",
         "nixpkgs": "nixpkgs_6",

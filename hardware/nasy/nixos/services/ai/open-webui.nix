@@ -33,7 +33,7 @@ in
       WEBUI_AUTH_TRUSTED_GROUPS_HEADER = "Remote-Groups";
       WEBUI_SESSION_COOKIE_SECURE = "True";
       WEBUI_AUTH_COOKIE_SECURE = "True";
-      OAUTH_ADMIN_ROLES = "admin";
+      OAUTH_ADMIN_ROLES = "aiadmin";
       ENABLE_OAUTH_GROUP_MANAGEMENT = "true";
       ENABLE_OAUTH_GROUP_CREATION = "true";
       ENABLE_OAUTH_ROLE_MANAGEMENT = "true";

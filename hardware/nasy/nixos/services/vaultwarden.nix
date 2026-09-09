@@ -1,9 +1,8 @@
 {
   config,
   mainaddr,
-  lib,
-  sharesdir,
   configdir,
+  mkTraefikLabels,
   ...
 }:
 let
@@ -25,10 +24,7 @@ in
         volumes = [
           "${configdir}/vaultwarden:/data:rw"
         ];
-        labels = {
-          "traefik.http.routers.vaultwarden.rule" = "Host(`vaultwarden.${mainaddr}`)";
-          "traefik.http.services.vaultwarden.loadbalancer.server.port" = "80";
-        };
+        labels = mkTraefikLabels { subdomain = "vaultwarden"; };
         logDriver = "journald";
       };
     };

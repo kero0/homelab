@@ -1,9 +1,9 @@
 {
   lib,
   config,
-  mainaddr,
   configdir,
   sharesdir,
+  mkTraefikLabels,
   ...
 }:
 let
@@ -49,7 +49,6 @@ in
         containerConfig =
           let
             WEBUI_PORT = "8130";
-            domain = "torrent.${mainaddr}";
           in
           {
             image = "docker.io/linuxserver/qbittorrent:latest";
@@ -64,10 +63,12 @@ in
               "${sharesdir}/Other:/other:rw"
               "${configdir}/qbittorrent:/config:rw"
             ];
-            labels = {
-              "traefik.docker.network" = "vpn";
-              "traefik.http.routers.qbittorrent.rule" = "Host(`${domain}`)";
-              "traefik.http.services.qbittorrent.loadbalancer.server.port" = WEBUI_PORT;
+            labels = mkTraefikLabels {
+              subdomain = "torrent";
+              application = "qbittorrent";
+              port = WEBUI_PORT;
+              public = true;
+              vpn = true;
             };
             networks = [ "container:vpn" ];
           };
@@ -78,10 +79,11 @@ in
           volumes = [
             "${configdir}/jackett:/config:rw"
           ];
-          labels = {
-            "traefik.docker.network" = "vpn";
-            "traefik.http.routers.jackett.rule" = "Host(`jackett.${mainaddr}`)";
-            "traefik.http.services.jackett.loadbalancer.server.port" = "9117";
+          labels = mkTraefikLabels {
+            subdomain = "jackett";
+            port = 9117;
+            vpn = true;
+            oauth-groups = "admin";
           };
           logDriver = "journald";
           networks = [ "container:vpn" ];
@@ -93,10 +95,11 @@ in
           volumes = [
             "${configdir}/prowlarr:/config:rw"
           ];
-          labels = {
-            "traefik.docker.network" = "vpn";
-            "traefik.http.routers.prowlarr.rule" = "Host(`prowlarr.${mainaddr}`)";
-            "traefik.http.services.prowlarr.loadbalancer.server.port" = "9696";
+          labels = mkTraefikLabels {
+            subdomain = "prowlarr";
+            port = 9696;
+            vpn = true;
+            oauth-groups = "admin";
           };
           networks = [ "container:vpn" ];
         };
@@ -108,9 +111,9 @@ in
             LOG_LEVEL = "info";
             LOG_HTML = "false";
           };
-          labels = {
-            "traefik.http.routers.flaresolverr.rule" = "Host(`flaresolverr.${mainaddr}`)";
-            "traefik.http.services.flaresolverr.loadbalancer.server.port" = "8191";
+          labels = mkTraefikLabels {
+            subdomain = "flaresolverr";
+            port = 8191;
           };
         };
       };
@@ -122,11 +125,12 @@ in
             "${sharesdir}/Downloads:/downloads:rw"
             "${sharesdir}/TV:/tv:rw"
           ];
-          labels = {
-            "traefik.http.routers.sonarr-main.rule" = "Host(`sonarr.${mainaddr}`)";
-            "traefik.http.services.sonarr-main.loadbalancer.server.port" = "8989";
-            "traefik.http.routers.sonarr-main.middlewares" = "tinyauth";
-            "tinyauth.apps.sonarr.oauth.groups" = "secondary";
+          labels = mkTraefikLabels {
+            subdomain = "sonarr";
+            application = "sonarr-main";
+            port = 8989;
+            oauth-groups = "secondary";
+            public = true;
           };
         };
       };
@@ -138,11 +142,12 @@ in
             "${sharesdir}/Downloads:/downloads:rw"
             "${sharesdir}/Movies:/movies:rw"
           ];
-          labels = {
-            "traefik.http.routers.radarr-main.rule" = "Host(`radarr.${mainaddr}`)";
-            "traefik.http.services.radarr-main.loadbalancer.server.port" = "7878";
-            "traefik.http.routers.radarr-main.middlewares" = "tinyauth";
-            "tinyauth.apps.radarr.oauth.groups" = "secondary";
+          labels = mkTraefikLabels {
+            subdomain = "radarr";
+            application = "radarr-main";
+            port = 7878;
+            oauth-groups = "secondary";
+            public = true;
           };
         };
       };
@@ -154,11 +159,12 @@ in
             "${sharesdir}/Downloads:/downloads:rw"
             "${sharesdir}/TV-Kids:/tv:rw"
           ];
-          labels = {
-            "traefik.http.routers.sonarr-kids.rule" = "Host(`sonarr-kids.${mainaddr}`)";
-            "traefik.http.services.sonarr-kids.loadbalancer.server.port" = "8989";
-            "traefik.http.routers.sonarr-kids.middlewares" = "tinyauth";
-            "tinyauth.apps.sonarr-kids.oauth.groups" = "secondary";
+          labels = mkTraefikLabels {
+            subdomain = "sonarr-kids";
+            application = "sonarr-kids";
+            port = 8989;
+            oauth-groups = "secondary";
+            public = true;
           };
         };
       };
@@ -175,11 +181,12 @@ in
             "${sharesdir}/Downloads:/downloads:rw"
             "${sharesdir}/Movies-Kids:/movies:rw"
           ];
-          labels = {
-            "traefik.http.routers.radarr-kids.rule" = "Host(`radarr-kids.${mainaddr}`)";
-            "traefik.http.services.radarr-kids.loadbalancer.server.port" = "7878";
-            "traefik.http.routers.radarr-kids.middlewares" = "tinyauth";
-            "tinyauth.apps.radarr.oauth.groups" = "secondary";
+          labels = mkTraefikLabels {
+            subdomain = "radarr-kids";
+            application = "radarr-kids";
+            port = 7878;
+            oauth-groups = "secondary";
+            public = true;
           };
         };
       };

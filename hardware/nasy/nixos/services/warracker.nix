@@ -3,6 +3,7 @@
   mainaddr,
   sharesdir,
   genericServiceUser,
+  mkTraefikLabels,
   ...
 }:
 let
@@ -85,11 +86,11 @@ in
           volumes = [
             "${sharesdir}/Warracker/:/data/uploads"
           ];
-          labels = {
-            "traefik.http.routers.warracker.rule" = "Host(`${url}`)";
-            "traefik.http.services.warracker.loadbalancer.server.port" = "80";
-            "traefik.http.routers.warracker.middlewares" = "tinyauth";
-            "tinyauth.apps.warranty.oauth.groups" = "warranty";
+          labels = mkTraefikLabels {
+            inherit subdomain;
+            application = "warracker";
+            public = true;
+            oauth-groups = "warranty";
           };
         };
       };

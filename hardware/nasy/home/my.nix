@@ -22,8 +22,6 @@
 
     shell = {
       alias.enable = true;
-      bash.enable = true;
-      fish.enable = true;
       kitty.enable = false;
       readline.enable = true;
       tools.enable = true;

@@ -33,5 +33,73 @@
       relabel_rules = loki.relabel.journal.rules
       labels = { component = "loki.source.journal" }
     }
+
+    discovery.relabel "syslog" {
+        targets = []
+
+        rule {
+            source_labels = ["__syslog_message_hostname"]
+            target_label  = "host"
+        }
+
+        rule {
+            source_labels = ["__syslog_message_hostname"]
+            target_label  = "hostname"
+        }
+
+        rule {
+            source_labels = ["__syslog_message_severity"]
+            target_label  = "level"
+        }
+
+        rule {
+            source_labels = ["__syslog_message_app_name"]
+            target_label  = "application"
+        }
+
+        rule {
+            source_labels = ["__syslog_message_facility"]
+            target_label  = "facility"
+        }
+
+        rule {
+            source_labels = ["__syslog_connection_hostname"]
+            target_label  = "connection_hostname"
+        }
+    }
+
+    loki.source.syslog "syslog" {
+        listener {
+            address      = "0.0.0.0:1601"
+            protocol     = "tcp"
+            idle_timeout = "0s"
+            use_rfc5424_message = true
+            labels       = { job = "syslog", component = "loki.source.syslog", protocol = "tcp" }
+            max_message_length = 0
+        }
+        listener {
+            address      = "0.0.0.0:1514"
+            protocol     = "udp"
+            idle_timeout = "0s"
+            use_rfc5424_message = true
+            labels       = { job = "syslog", component = "loki.source.syslog", protocol = "udp" }
+            max_message_length = 0
+        }
+        listener {
+            address      = "0.0.0.0:1515"
+            protocol     = "udp"
+            labels       = { job = "syslog", component = "loki.source.syslog", protocol = "udp", cluster="esphome" }
+            label_structured_data = true
+            syslog_format = "rfc3164"
+        }
+        forward_to    = [loki.write.endpoint.receiver]
+        relabel_rules = discovery.relabel.syslog.rules
+    }
+
   '';
+  networking.firewall.allowedUDPPorts = [
+    1514
+    1515
+  ];
+  networking.firewall.allowedTCPPorts = [ 1601 ];
 }

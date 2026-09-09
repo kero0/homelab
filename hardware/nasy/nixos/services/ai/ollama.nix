@@ -14,7 +14,7 @@
       "gemma4:e2b"
       "qwen3.5:4b"
     ];
-    models = "${sharesdir}/models";
+    modelsDir = "${sharesdir}/models";
     environmentVariables = {
       OLLAMA_MAX_LOADED_MODELS = "1";
     };

@@ -2,6 +2,7 @@
   config,
   configdir,
   sharesdir,
+  mkTraefikLabels,
   ...
 }:
 let
@@ -39,13 +40,16 @@ in
         "${sharesdir}/metube:/downloads:rw"
         "${configdir}/metube:/config:rw"
       ];
-      labels = {
-        "traefik.docker.network" = "vpn";
-        "traefik.http.services.metube.loadbalancer.server.port" = "8081";
-        "traefik.http.routers.metube.middlewares" = "tinyauth";
-        "tinyauth.apps.metube.oauth.groups" = "tertiary";
-        "tinyauth.apps.metube.path.allow" = ''^\/add'';
-      };
+      labels =
+        mkTraefikLabels {
+          subdomain = "metube";
+          port = 8081;
+          oauth-groups = "tertiary";
+          vpn = true;
+        }
+        // {
+          "tinyauth.apps.metube.path.allow" = ''^\/add'';
+        };
       logDriver = "journald";
       networks = [
         "container:vpn"

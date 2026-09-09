@@ -111,7 +111,7 @@
 
           "vfs objects" = "catia fruit streams_xattr";
           "fruit:time machine" = "yes";
-          "fruit:time machine max size" = "500G";
+          "fruit:time machine max size" = "1T";
           "comment" = "Time Machine Backup";
           "available" = "yes";
           "browseable" = "yes";

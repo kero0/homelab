@@ -46,7 +46,7 @@
       ];
 
       devices = [
-        "/dev/net/tun:/dev/net/tun:rwm"
+        "/dev/net/tun:/dev/net/tun"
       ];
 
       addHosts = [
