@@ -1,10 +1,9 @@
 {
-  pkgs,
-  lib,
   config,
   mainaddr,
   configdir,
   sharesdir,
+  mkTraefikLabels,
   ...
 }:
 let
@@ -37,20 +36,25 @@ in
           "${configdir}/jellyfin:/config:rw"
           "${volumes.jellyfin-cache.ref}:/cache:rw"
         ];
-        labels = {
-          "traefik.docker.network" = "vpn";
-          "traefik.http.middlewares.jellyfin.headers.STSIncludeSubdomains" = "true";
-          "traefik.http.middlewares.jellyfin.headers.STSPreload" = "true";
-          "traefik.http.middlewares.jellyfin.headers.contentTypeNosniff" = "true";
-          "traefik.http.middlewares.jellyfin.headers.customResponseHeaders.X-Robots-Tag" =
-            "noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex";
-          "traefik.http.middlewares.jellyfin.headers.customresponseheaders.X-XSS-PROTECTION" = "1";
-          "traefik.http.middlewares.jellyfin.headers.forceSTSHeader" = "true";
-          "traefik.http.middlewares.jellyfin.headers.frameDeny" = "true";
-          "traefik.http.routers.jellyfin.middlewares" = "jellyfin";
-          "traefik.http.routers.jellyfin.rule" = "Host(`media.${mainaddr}`)";
-          "traefik.http.services.jellyfin.loadbalancer.server.port" = "8096";
-        };
+        labels =
+          mkTraefikLabels {
+            subdomain = "media";
+            application = "jellyfin";
+            port = 8096;
+            public = true;
+            vpn = true;
+          }
+          // {
+            "traefik.http.middlewares.jellyfin.headers.STSIncludeSubdomains" = "true";
+            "traefik.http.middlewares.jellyfin.headers.STSPreload" = "true";
+            "traefik.http.middlewares.jellyfin.headers.contentTypeNosniff" = "true";
+            "traefik.http.middlewares.jellyfin.headers.customResponseHeaders.X-Robots-Tag" =
+              "noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex";
+            "traefik.http.middlewares.jellyfin.headers.customresponseheaders.X-XSS-PROTECTION" = "1";
+            "traefik.http.middlewares.jellyfin.headers.forceSTSHeader" = "true";
+            "traefik.http.middlewares.jellyfin.headers.frameDeny" = "true";
+            "traefik.http.routers.jellyfin.middlewares" = "jellyfin";
+          };
         user = "${toString config.users.users.serviceuser.uid}:${toString config.users.groups.services.gid}";
         logDriver = "journald";
         networks = [

@@ -14,7 +14,11 @@
 
   security.unprivilegedUsernsClone = true;
   boot = {
-    kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_stable;
+    # kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_stable;
+    kernelParams = [
+      "zfs.zfs_arc_min=${toString (8 * 1024 * 1024 * 1024)}"
+      "zfs.zfs_arc_max=${toString (16 * 1024 * 1024 * 1024)}"
+    ];
     loader.systemd-boot.enable = true;
     initrd = {
       availableKernelModules = [
@@ -77,7 +81,7 @@
 
   swapDevices = [
     {
-      device = "/dev/disk/by-uuid/b0575db3-17d4-42a1-a383-d956840ecc44";
+      device = "/dev/zvol/zroot/swap";
     }
   ];
 

@@ -1,7 +1,5 @@
 {
   config,
-  lib,
-  pkgs,
   mainaddr,
   configdir,
   ...
@@ -34,13 +32,28 @@
         middlewares = {
           "homeassistant-addHost" = {
             headers = {
-              customRequestHeaders = {
-                Host = "hass.lan";
-              };
+              # STSIncludeSubdomains = "true";
+              # STSPreload = "true";
+              # contentTypeNosniff = "true";
+              # customResponseHeaders.X-Robots-Tag = "noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex";
+              # customresponseheaders.X-XSS-PROTECTION = "1";
+              # forceSTSHeader = "true";
+              # frameDeny = "true";
+              customRequestHeaders.Host = "hass.lan";
             };
           };
         };
         routers = {
+          # esphome = {
+          #   rule = "Host(`esphome.${mainaddr}`)";
+          #   middlewares = [ "homeassistant-addHost" ];
+          #   service = "esphome";
+          #   entryPoints = [
+          #     "http"
+          #     "https"
+          #   ];
+          #   tls = { };
+          # };
           homeassistant = {
             rule = "Host(`homeassistant.${mainaddr}`)";
             middlewares = [ "homeassistant-addHost" ];
@@ -51,9 +64,19 @@
             ];
             tls = { };
           };
+          # matter = {
+          #   rule = "Host(`matter.${mainaddr}`)";
+          #   middlewares = [ "homeassistant-addHost" ];
+          #   service = "matter";
+          #   entryPoints = [
+          #     "http"
+          #     "https"
+          #   ];
+          #   tls = { };
+          # };
           traefik = {
             rule = "Host(`traefik.${mainaddr}`)";
-            service = "traefik";
+            service = "api@internal";
             entryPoints = [
               "http"
               "https"
@@ -62,20 +85,18 @@
           };
         };
         services = {
-          homeassistant = {
-            loadBalancer = {
-              servers = [
-                { url = "http://hass.lan:8123"; }
-              ];
-            };
-          };
-          traefik = {
-            loadBalancer = {
-              servers = [
-                { url = "http://localhost:8080"; }
-              ];
-            };
-          };
+          esphome.loadBalancer.servers = [
+            { url = "http://hass.lan:6052"; }
+          ];
+          homeassistant.loadBalancer.servers = [
+            { url = "http://hass.lan:8123"; }
+          ];
+          matter.loadBalancer.servers = [
+            { url = "http://hass.lan:5580"; }
+          ];
+          traefik.loadBalancer.servers = [
+            { url = "http://hass.lan:8080"; }
+          ];
         };
       };
     };
@@ -88,6 +109,9 @@
       api = {
         dashboard = true;
         insecure = true;
+      };
+      log = {
+        level = "DEBUG";
       };
       entryPoints = {
         http = {

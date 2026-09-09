@@ -7,10 +7,41 @@
   ...
 }:
 {
-  _module.args = {
+  _module.args = rec {
     mainaddr = "whvdjsi.duckdns.org";
+    publicaddr = "kirols.duckdns.org";
     configdir = "/storage/configs/";
     sharesdir = "/storage/Shares/";
+    mkTraefikLabels =
+      {
+        subdomain,
+        application ? subdomain,
+        port ? 80,
+        public ? false,
+        oauth-groups ? null,
+        vpn ? false,
+        middlewares ? [ ],
+        network ? if vpn then "vpn" else null,
+      }:
+      lib.attrsets.mergeAttrsList (
+        [
+          {
+            "traefik.http.routers.${application}.rule" = "Host(`${subdomain}.${mainaddr}`)";
+            "traefik.http.routers.${application}.service" = application;
+            "traefik.http.routers.${application}.middlewares" = lib.concatStringsSep "," (
+              middlewares ++ lib.lists.optional (oauth-groups != null) "tinyauth"
+            );
+            "traefik.http.services.${application}.loadbalancer.server.port" = toString port;
+          }
+        ]
+        ++ lib.lists.optional (oauth-groups != null) {
+          "tinyauth.apps.${application}.oauth.groups" = oauth-groups;
+        }
+        ++ lib.lists.optional public {
+          # TODO: Fill out non-wireguard access
+        }
+        ++ lib.lists.optional (network != null) { "traefik.docker.network" = network; }
+      );
   };
   users.users."${myuser}".linger = true;
   networking.firewall.interfaces."podman+".allowedUDPPorts = [

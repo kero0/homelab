@@ -17,9 +17,15 @@
     nixpkgs.url = "github:NixOS/nixpkgs";
     deploy-rs.url = "github:serokell/deploy-rs";
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
+    calendar-display = {
+      url = "github:kero0/calendar-display";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
   };
   outputs =
-    {
+    inputs@{
       self,
       nixos,
       deploy-rs,
@@ -58,6 +64,12 @@
                 nixos-hardware.nixosModules.common-pc-ssd
                 quadlet-nix.nixosModules.quadlet
                 lanzaboote.nixosModules.lanzaboote
+
+                {
+                  _module.args = {
+                    leaf-inputs = inputs;
+                  };
+                }
 
                 {
                   home-manager.users.${myuser}.imports = umport {

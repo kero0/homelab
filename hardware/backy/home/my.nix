@@ -15,7 +15,6 @@
 
     shell = {
       alias.enable = true;
-      bash.enable = true;
       readline.enable = true;
       tools.enable = true;
       starship.enable = true;

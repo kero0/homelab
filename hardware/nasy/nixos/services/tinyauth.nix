@@ -1,9 +1,9 @@
 {
   config,
   lib,
-  pkgs,
   mainaddr,
   configdir,
+  mkTraefikLabels,
   ...
 }:
 let
@@ -74,8 +74,10 @@ in
           LDAP_ADMIN_GROUP_NAME = "_pocket_id_admins";
           UI_CONFIG_DISABLED = "true";
         };
-        labels = {
-          "traefik.http.services.pocket-id.loadbalancer.server.port" = "1411";
+        labels = mkTraefikLabels {
+          subdomain = "pocket-id";
+          port = 1411;
+          public = true;
         };
         volumes = [
           "${configdir}/pocket-id/data:/app/data"
@@ -92,7 +94,7 @@ in
         RestartSec = "10s";
       };
       containerConfig = {
-        image = "lldap/lldap:stable";
+        image = "docker.io/lldap/lldap:stable";
         environments = {
           APP_URL = "https://pocket-id.${mainaddr}";
           GID = "${toString config.users.groups.services.gid}";
@@ -106,9 +108,10 @@ in
         environmentFiles = [
           config.age.secrets.lldap-env.path
         ];
-        labels = {
-          "traefik.enable" = "true";
-          "traefik.http.services.lldap.loadbalancer.server.port" = "17170";
+        labels = mkTraefikLabels {
+          subdomain = "lldap";
+          port = 17170;
+          public = true;
         };
         logDriver = "journald";
       };
@@ -144,20 +147,25 @@ in
         environmentFiles = [
           config.age.secrets.tinyauth-env.path
         ];
-        labels = {
-          "traefik.http.services.tinyauth.loadbalancer.server.port" = "3000";
-          "traefik.http.middlewares.tinyauth.forwardauth.address" =
-            "https://tinyauth.${mainaddr}/api/auth/traefik";
-          "traefik.http.middlewares.tinyauth.forwardauth.authResponseHeaders" = lib.concatStringsSep "," (
-            with config.my.auth-headers;
-            [
-              user
-              email
-              name
-              groups
-            ]
-          );
-        };
+        labels =
+          mkTraefikLabels {
+            subdomain = "tinyauth";
+            port = 3000;
+            public = false;
+          }
+          // {
+            "traefik.http.middlewares.tinyauth.forwardauth.address" =
+              "https://tinyauth.${mainaddr}/api/auth/traefik";
+            "traefik.http.middlewares.tinyauth.forwardauth.authResponseHeaders" = lib.concatStringsSep "," (
+              with config.my.auth-headers;
+              [
+                user
+                email
+                name
+                groups
+              ]
+            );
+          };
         logDriver = "journald";
       };
     };
