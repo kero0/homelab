@@ -420,11 +420,11 @@
         "tmux-ssh-split": "tmux-ssh-split"
       },
       "locked": {
-        "lastModified": 1789093061,
-        "narHash": "sha256-OnaKzQwxl3Y1hv9FyjuGEekWhjTZpMWsGc/7EUvRdA4=",
+        "lastModified": 1789176732,
+        "narHash": "sha256-+uizIMJFsJDMts5ZPa46aQ0dKwStBwpG/l4ybsmPoQo=",
         "owner": "kero0",
         "repo": "nixos",
-        "rev": "6bec2f650624bcd663a1a393272671a0e6300d69",
+        "rev": "7719446b3f8e2d92ca3109fdde4b7f30629fff57",
         "type": "github"
       },
       "original": {
@@ -438,11 +438,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1788647146,
-        "narHash": "sha256-t/WMIIjL+WQp7Ib5Veoq0gCvyqgGmEbAhZyAg3OX9s0=",
+        "lastModified": 1788860136,
+        "narHash": "sha256-MhPMOFV4pVkygWEbQ8t1De/uQ9cWF1u++tRe2L5tG48=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "dd2543c4eb71b24abb5d873b8d45c89dbe4b167c",
+        "rev": "62173785b9a18c78b4a15aca2623d02bceb9d077",
         "type": "github"
       },
       "original": {
