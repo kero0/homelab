@@ -162,17 +162,16 @@
         "emacs-overlay": "emacs-overlay",
         "git-hooks": "git-hooks",
         "nixpkgs": "nixpkgs_4",
-        "packages-eglot-booster": "packages-eglot-booster",
         "packages-logview": "packages-logview",
         "packages-ox-chameleon": "packages-ox-chameleon",
         "packages-revealjs": "packages-revealjs"
       },
       "locked": {
-        "lastModified": 1790850232,
-        "narHash": "sha256-coY54cD3Gf5bVA0VjSL/+6+SU8MeUuSaKHCPq3h6SLM=",
+        "lastModified": 1792163941,
+        "narHash": "sha256-aqJUx+G58fw3wxMjcxYR3srx8K5YxOjzTUNqV7c6o5Q=",
         "owner": "kero0",
         "repo": "emacs",
-        "rev": "0d3cbb8d131c78d04e0bed9eb9e7bdb87bd8e3b2",
+        "rev": "74d3712503e2f96d30200004294f7093215f8a7b",
         "type": "github"
       },
       "original": {
@@ -296,11 +295,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790500375,
-        "narHash": "sha256-XN3sDtn8TU9hAc9xqZ+SqRB/HHm2wjxM6aSWYLJU+oo=",
+        "lastModified": 1791909798,
+        "narHash": "sha256-VAhpCOmrun/KXimYfR8NM88bciKCui7CqHHhThSzgag=",
         "owner": "cachix",
         "repo": "git-hooks.nix",
-        "rev": "a0e4241b51206fbcbf52fd322eb5f0cd80f153c4",
+        "rev": "1ba1dbfe28738c9a71c266be6efa5b89e75491a9",
         "type": "github"
       },
       "original": {
@@ -411,11 +410,11 @@
         "tmux-ssh-split": "tmux-ssh-split"
       },
       "locked": {
-        "lastModified": 1792117600,
-        "narHash": "sha256-KfCYKTi2kssbQQczCkbQG7bWpHA8rCaOr2aDMmX6Gfs=",
+        "lastModified": 1792194107,
+        "narHash": "sha256-lwyWD0LwVbb58BIPEavAHKNfQj88gT8PgVmbAI0ZHfg=",
         "owner": "kero0",
         "repo": "nixos",
-        "rev": "eba9653d0cc78e6bdd11748bd3cb90b950db9380",
+        "rev": "47c6ee93aea54f0f5ef1bf008eed82a00f929eb5",
         "type": "github"
       },
       "original": {
@@ -544,22 +543,6 @@
       "original": {
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "packages-eglot-booster": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1782829258,
-        "narHash": "sha256-HhWR40j/WFcorp8QttXtOz5yxL1B4JUXL+9IuNpoND0=",
-        "owner": "jdtsmith",
-        "repo": "eglot-booster",
-        "rev": "510f579409627c333ef0e9157db713b1004da842",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jdtsmith",
-        "repo": "eglot-booster",
         "type": "github"
       }
     },
