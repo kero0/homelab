@@ -5,7 +5,7 @@
 }:
 {
   services.ollama = {
-    enable = true;
+    enable = false;
     syncModels = true;
     host = "127.0.0.1";
     package = pkgs.ollama-vulkan;

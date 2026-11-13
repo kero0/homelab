@@ -10,6 +10,7 @@ let
   files = [
     "calendar-display.age"
     "dns-pass.age"
+    "ics-merger.age"
     "immich-config.age"
     "immich-test-config.age"
     "lldap-env.age"

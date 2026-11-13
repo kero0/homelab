@@ -36,10 +36,10 @@ in
             "/var/run/docker.sock:/var/run/docker.sock"
             "${sharesdir}/Stacks:${sharesdir}/Stacks"
           ];
+          # Holds the docker socket; kept off the Pangolin edge entirely, not just gated by it.
           labels = mkTraefikLabels {
             inherit subdomain;
             application = "dockhand";
-            public = true;
             oauth-groups = "admin";
             port = 3000;
           };

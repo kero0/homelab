@@ -20,6 +20,9 @@ in
         After = [
           containers.vpn.ref
         ];
+        PartOf = [
+          containers.vpn.ref
+        ];
       };
       containerConfig = {
         image = "docker.io/jellyfin/jellyfin:latest";

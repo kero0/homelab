@@ -14,14 +14,21 @@
       url = "github:kero0/nixos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs.url = "github:NixOS/nixpkgs";
-    deploy-rs.url = "github:serokell/deploy-rs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
     calendar-display = {
       url = "github:kero0/calendar-display";
       inputs = {
         nixpkgs.follows = "nixpkgs";
       };
+    };
+    ics-merger = {
+      url = "github:kero0/ics-merger";
+      flake = false;
     };
   };
   outputs =
@@ -54,12 +61,11 @@
             modules =
               mmodules {
                 inherit hostname myuser system;
-                exclude = [ ".*/secrets.nix" ];
+                # exclude = [ ".*/secrets.nix" ];
                 age = true;
-                defaultsecrets = false;
               }
               ++ [
-                nixos-hardware.nixosModules.common-cpu-intel
+                # nixos-hardware.nixosModules.common-cpu-intel
                 nixos-hardware.nixosModules.common-pc
                 nixos-hardware.nixosModules.common-pc-ssd
                 quadlet-nix.nixosModules.quadlet
@@ -92,9 +98,8 @@
             modules =
               mmodules {
                 inherit hostname myuser system;
-                exclude = [ ".*/secrets.nix" ];
+                # exclude = [ ".*/secrets.nix" ];
                 age = false;
-                defaultsecrets = false;
               }
               ++ [
                 disko.nixosModules.disko

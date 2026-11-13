@@ -15,7 +15,7 @@
       enable = true;
       templates = {
         # timeshare already has a system for managing history
-        Timeshare = {
+        Timemachine = {
           frequently = 0;
           hourly = 0;
           daily = 1;

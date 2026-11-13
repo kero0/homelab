@@ -108,10 +108,11 @@ in
         environmentFiles = [
           config.age.secrets.lldap-env.path
         ];
+        # Raw LDAP admin UI; only pocket-id needs to reach it, over the
+        # container network, never through Traefik or Pangolin.
         labels = mkTraefikLabels {
           subdomain = "lldap";
           port = 17170;
-          public = true;
         };
         logDriver = "journald";
       };
@@ -130,19 +131,24 @@ in
         ];
       };
       containerConfig = {
-        image = "ghcr.io/steveiliop56/tinyauth:v4";
+        image = "ghcr.io/tinyauthapp/tinyauth:v5";
         environments = {
-          APP_URL = "https://tinyauth.${mainaddr}";
-          OAUTH_AUTO_REDIRECT = "pocketid";
-          PROVIDERS_POCKETID_AUTH_URL = "https://pocket-id.${mainaddr}/authorize";
-          PROVIDERS_POCKETID_TOKEN_URL = "https://pocket-id.${mainaddr}/api/oidc/token";
-          PROVIDERS_POCKETID_USER_INFO_URL = "https://pocket-id.${mainaddr}/api/oidc/userinfo";
-          PROVIDERS_POCKETID_REDIRECT_URL = "https://tinyauth.${mainaddr}/api/oauth/callback/pocketid";
-          PROVIDERS_POCKETID_SCOPES = "openid email profile groups";
-          PROVIDERS_POCKETID_NAME = "Pocket ID";
+          TINYAUTH_APPURL = "https://tinyauth.${mainaddr}";
+          TINYAUTH_OAUTH_AUTOREDIRECT = "pocketid";
+          TINYAUTH_OAUTH_PROVIDERS_POCKETID_AUTHURL = "https://pocket-id.${mainaddr}/authorize";
+          TINYAUTH_OAUTH_PROVIDERS_POCKETID_TOKENURL = "https://pocket-id.${mainaddr}/api/oidc/token";
+          TINYAUTH_OAUTH_PROVIDERS_POCKETID_USERINFOURL = "https://pocket-id.${mainaddr}/api/oidc/userinfo";
+          TINYAUTH_OAUTH_PROVIDERS_POCKETID_REDIRECTURL = "https://tinyauth.${mainaddr}/api/oauth/callback/pocketid";
+          TINYAUTH_OAUTH_PROVIDERS_POCKETID_SCOPES = "openid email profile groups";
+          TINYAUTH_OAUTH_PROVIDERS_POCKETID_NAME = "Pocket ID";
+          TINYAUTH_AUTH_TRUSTEDPROXIES = "172.17.0.0/16";
         };
         volumes = [
-          "/var/run/docker.sock:/var/run/docker.sock"
+          "${configdir}/tinyauth:/data:rw"
+          # "/var/run/docker.sock:/var/run/docker.sock"
+        ];
+        publishPorts = [
+          "127.0.0.1:3467:3000"
         ];
         environmentFiles = [
           config.age.secrets.tinyauth-env.path
@@ -154,8 +160,7 @@ in
             public = false;
           }
           // {
-            "traefik.http.middlewares.tinyauth.forwardauth.address" =
-              "https://tinyauth.${mainaddr}/api/auth/traefik";
+            "traefik.http.middlewares.tinyauth.forwardauth.address" = "http://127.0.0.1:3467/api/auth/traefik";
             "traefik.http.middlewares.tinyauth.forwardauth.authResponseHeaders" = lib.concatStringsSep "," (
               with config.my.auth-headers;
               [

@@ -9,7 +9,6 @@
 {
   _module.args = rec {
     mainaddr = "whvdjsi.duckdns.org";
-    publicaddr = "kirols.duckdns.org";
     configdir = "/storage/configs/";
     sharesdir = "/storage/Shares/";
     mkTraefikLabels =
@@ -21,24 +20,54 @@
         oauth-groups ? null,
         vpn ? false,
         middlewares ? [ ],
-        network ? if vpn then "vpn" else null,
+        network ? if vpn then "podman" else null,
       }:
+      let
+        host = "${subdomain}.${mainaddr}";
+        directMiddlewares = middlewares ++ lib.lists.optional (oauth-groups != null) "tinyauth";
+        mkRouter =
+          {
+            name,
+            rule,
+            priority ? null,
+            routerMiddlewares ? [ ],
+          }:
+          {
+            "traefik.http.routers.${name}.rule" = rule;
+            "traefik.http.routers.${name}.service" = application;
+            "traefik.http.routers.${name}.entrypoints" = "http,https";
+          }
+          // lib.attrsets.optionalAttrs (priority != null) {
+            "traefik.http.routers.${name}.priority" = toString priority;
+          }
+          // lib.attrsets.optionalAttrs (routerMiddlewares != [ ]) {
+            "traefik.http.routers.${name}.middlewares" = lib.concatStringsSep "," routerMiddlewares;
+          };
+      in
       lib.attrsets.mergeAttrsList (
         [
-          {
-            "traefik.http.routers.${application}.rule" = "Host(`${subdomain}.${mainaddr}`)";
-            "traefik.http.routers.${application}.service" = application;
-            "traefik.http.routers.${application}.middlewares" = lib.concatStringsSep "," (
-              middlewares ++ lib.lists.optional (oauth-groups != null) "tinyauth"
-            );
-            "traefik.http.services.${application}.loadbalancer.server.port" = toString port;
+          { "traefik.http.services.${application}.loadbalancer.server.port" = toString port; }
+        ]
+        ++ lib.lists.optional public (
+          # Requests relayed by Newt arrive over loopback and already passed
+          # Pangolin's identity-provider login; skip tinyauth for those only.
+          mkRouter {
+            name = "${application}-tunnel";
+            rule = "Host(`${host}`) && ClientIP(`127.0.0.1/32`)";
+            priority = 100;
+            routerMiddlewares = middlewares;
           }
+        )
+        ++ [
+          (mkRouter {
+            name = application;
+            rule = "Host(`${host}`)";
+            priority = if public then 50 else null;
+            routerMiddlewares = directMiddlewares;
+          })
         ]
         ++ lib.lists.optional (oauth-groups != null) {
           "tinyauth.apps.${application}.oauth.groups" = oauth-groups;
-        }
-        ++ lib.lists.optional public {
-          # TODO: Fill out non-wireguard access
         }
         ++ lib.lists.optional (network != null) { "traefik.docker.network" = network; }
       );
@@ -52,6 +81,12 @@
     "default.target"
   ];
   virtualisation = {
+    containers.registries.settings = {
+      unqualified-search-registries = [
+        "docker.io"
+        "quay.io"
+      ];
+    };
     quadlet.enable = true;
     podman = {
       dockerSocket.enable = true;

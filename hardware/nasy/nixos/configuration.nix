@@ -56,7 +56,7 @@
   };
 
   services = {
-    journald.extraConfig = "SystemMaxUse=100M";
+    journald.settings.Journal.SystemMaxUse = "100M";
     fail2ban.enable = true;
     fwupd.enable = true;
     openssh = {

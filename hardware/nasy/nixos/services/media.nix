@@ -12,6 +12,7 @@ let
     unitConfig = {
       Requires = [ containers.vpn.ref ];
       After = [ containers.vpn.ref ];
+      PartOf = [ containers.vpn.ref ];
     };
     containerConfig = {
       environments = {

@@ -12,7 +12,6 @@
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  security.unprivilegedUsernsClone = true;
   boot = {
     # kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_stable;
     kernelParams = [
@@ -37,7 +36,7 @@
       luks.forceLuksSupportInInitrd = true;
       systemd = {
         storePaths = [
-          "${pkgs.clevis}"
+          # "${pkgs.clevis}"
           "${pkgs.curl}"
           "${pkgs.cryptsetup}"
           "${pkgs.luksmeta}"
@@ -54,6 +53,7 @@
 
     kernel.sysctl = {
       "net.core.bpf_jit_harden" = 1;
+      "user.max_user_namespaces" = 256221;
     };
 
     supportedFilesystems = [ "zfs" ];
@@ -69,14 +69,21 @@
     trim.enable = true;
   };
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/db1fad7d-522f-4e56-9388-5f3fc8a30e89";
-    fsType = "ext4";
-  };
+  fileSystems = {
+    "/" = {
+      device = "/dev/disk/by-uuid/db1fad7d-522f-4e56-9388-5f3fc8a30e89";
+      fsType = "ext4";
+    };
 
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/7C82-26D3";
-    fsType = "vfat";
+    "/boot" = {
+      device = "/dev/disk/by-uuid/7C82-26D3";
+      fsType = "vfat";
+    };
+
+    "/var/lib/containers" = {
+      device = "zroot/container-volumes";
+      fsType = "zfs";
+    };
   };
 
   swapDevices = [

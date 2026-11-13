@@ -17,6 +17,9 @@ in
       After = [
         containers.vpn.ref
       ];
+      PartOf = [
+        containers.vpn.ref
+      ];
     };
     containerConfig = {
       image = "ghcr.io/alexta69/metube";

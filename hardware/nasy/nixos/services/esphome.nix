@@ -2,6 +2,8 @@
   config,
   lib,
   mainaddr,
+  leaf-inputs,
+  pkgs,
   ...
 }:
 let
@@ -14,6 +16,7 @@ in
     enable = true;
     port = httpPort;
     address = "127.0.0.1";
+    # package = (import leaf-inputs.nixpkgs-esphome { inherit (pkgs.hostPlatform) system; }).esphome;
   };
 
   virtualisation.quadlet.containers.tinyauth.containerConfig.labels."tinyauth.apps.${subdomain}.oauth.groups" =

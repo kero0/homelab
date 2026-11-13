@@ -39,7 +39,7 @@
               # customresponseheaders.X-XSS-PROTECTION = "1";
               # forceSTSHeader = "true";
               # frameDeny = "true";
-              customRequestHeaders.Host = "hass.lan";
+              customRequestHeaders.Host = "hass.localdomain";
             };
           };
         };
@@ -85,18 +85,18 @@
           };
         };
         services = {
-          esphome.loadBalancer.servers = [
-            { url = "http://hass.lan:6052"; }
-          ];
+          # esphome.loadBalancer.servers = [
+          #   { url = "http://hass.localdomain:6052"; }
+          # ];
           homeassistant.loadBalancer.servers = [
-            { url = "http://hass.lan:8123"; }
+            { url = "http://hass.localdomain:8123"; }
           ];
-          matter.loadBalancer.servers = [
-            { url = "http://hass.lan:5580"; }
-          ];
-          traefik.loadBalancer.servers = [
-            { url = "http://hass.lan:8080"; }
-          ];
+          # matter.loadBalancer.servers = [
+          #   { url = "http://hass.localdomain:5580"; }
+          # ];
+          # traefik.loadBalancer.servers = [
+          #   { url = "http://hass.localdomain:8080"; }
+          # ];
         };
       };
     };
@@ -159,6 +159,8 @@
           };
           forwardedHeaders = {
             trustedIPs = [
+              # Newt terminates the Pangolin tunnel on loopback.
+              "127.0.0.1/32"
               "10.0.0.0/8"
               "172.16.0.0/12"
               "192.168.0.0/16"
