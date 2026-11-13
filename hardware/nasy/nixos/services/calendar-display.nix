@@ -10,6 +10,11 @@ let
   httpPort = 3181;
   subdomain = "calendar";
   tinyauth = false;
+  calendarDisplayServer = leaf-inputs.calendar-display.server.${pkgs.system}.overrideAttrs (old: {
+    preBuild = (old.preBuild or "") + ''
+      unset AWS_LC_SYS_USE_SYSTEM
+    '';
+  });
 in
 {
   systemd = {
@@ -46,7 +51,7 @@ in
         };
         serviceConfig = {
           EnvironmentFile = config.age.secrets.calendar-display.path;
-          ExecStart = "${leaf-inputs.calendar-display.server.${pkgs.system}}/bin/calendar-display-server";
+          ExecStart = "${calendarDisplayServer}/bin/calendar-display-server";
           Restart = "on-failure";
           KillMode = "process";
         };
