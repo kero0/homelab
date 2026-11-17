@@ -20,6 +20,9 @@ jobs:
           - target: nixosConfigurations.backy.config.system.path
             os: ubuntu-latest
             free-space: true
+          - target: nixosConfigurations.vpny.config.system.build.toplevel
+            os: ubuntu-24.04-arm
+            free-space: false
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository

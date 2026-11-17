@@ -124,6 +124,31 @@
                 exclude = [ ".*/secrets.nix" ];
               };
           };
+        vpny =
+          let
+            myuser = "kirolsb";
+            system = "aarch64-linux";
+            hostname = "vpny";
+          in
+          nixpkgs.lib.nixosSystem {
+            modules =
+              mmodules {
+                inherit hostname myuser system;
+                age = false;
+              }
+              ++ [
+                agenix.nixosModules.default
+                {
+                  home-manager.users.${myuser}.imports = umport {
+                    ipath = ./hardware/vpny/home;
+                  };
+                }
+              ]
+              ++ umport {
+                ipath = ./hardware/vpny/nixos;
+                exclude = [ ".*/secrets.nix" ];
+              };
+          };
       };
       vms = nixpkgs.lib.attrsets.concatMapAttrs (host: config: {
         ${host} = config.pkgs.writeShellScriptBin "${host}" ''
@@ -144,7 +169,11 @@
           in
           nameValuePair name {
             default = pkgs.mkShell {
-              packages = [ pkgs.deploy-rs ];
+              packages = [
+                pkgs.deploy-rs
+                pkgs.oci-cli
+                pkgs.opentofu
+              ];
               inputsFrom = [ value.default ];
             };
           }
@@ -176,6 +205,19 @@
             localBuild = true;
             user = "root";
             path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.backy;
+          };
+        };
+        vpny = {
+          hostname = "163.192.192.83";
+          profiles.system = {
+            sshUser = "root";
+            sshOpts = [
+              "-p"
+              "9639"
+            ];
+            remoteBuild = true;
+            user = "root";
+            path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.vpny;
           };
         };
       };
