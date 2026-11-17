@@ -14,7 +14,8 @@
   services.openssh.enable = true;
   services.fail2ban.enable = true;
 
-  boot.kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_stable;
+  # zfs is marked broken on xanmod_stable (7.3)
+  boot.kernelPackages = pkgs.linuxKernel.packages.linux_xanmod;
   users.users.${myuser}.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMvDP88rn/X7FE59zFrtk4e/js1JzAHsC5OUyGmDyV2J"
   ];

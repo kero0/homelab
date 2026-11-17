@@ -5,7 +5,7 @@
       "crowdsecurity/linux"
       "crowdsecurity/sshd"
     ];
-    localConfig.acquisitions = [
+    settings.acquisitions = [
       {
         source = "journalctl";
         journalctl_filter = [ "_SYSTEMD_UNIT=sshd.service" ];

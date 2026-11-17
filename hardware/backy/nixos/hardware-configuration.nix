@@ -9,6 +9,5 @@
       "xen_blkfront"
     ];
     kernelModules = [ "dm-snapshot" ];
-    systemd.enable = true;
   };
 }
