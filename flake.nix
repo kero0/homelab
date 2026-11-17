@@ -41,10 +41,11 @@
     }:
     let
       inherit (nixos.inputs)
+        agenix
         disko
+        lanzaboote
         nixpkgs
         nixos-hardware
-        lanzaboote
         ;
       inherit (nixos) mmodules umport;
     in
@@ -62,7 +63,7 @@
               mmodules {
                 inherit hostname myuser system;
                 # exclude = [ ".*/secrets.nix" ];
-                age = true;
+                age = false;
               }
               ++ [
                 # nixos-hardware.nixosModules.common-cpu-intel
@@ -70,6 +71,8 @@
                 nixos-hardware.nixosModules.common-pc-ssd
                 quadlet-nix.nixosModules.quadlet
                 lanzaboote.nixosModules.lanzaboote
+
+                agenix.nixosModules.default
 
                 {
                   _module.args = {

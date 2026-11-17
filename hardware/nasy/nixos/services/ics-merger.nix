@@ -28,8 +28,9 @@ let
 in
 {
   age.secrets.ics-merger = {
-    inherit (genericServiceUser) name group;
-    mode = "0600";
+    inherit (genericServiceUser) group;
+    owner = genericServiceUser.name;
+    mode = "0400";
   };
 
   virtualisation.quadlet = {
@@ -51,10 +52,8 @@ in
         volumes = [
           "${appdir}/config.yaml:/config/config.yaml"
           "${appdir}/data:/config/data"
-          # Reference as `env_file: secrets/providers.env` in config.yaml.
           "${config.age.secrets.ics-merger.path}:/config/secrets/providers.env:ro"
         ];
-        # The merged .ics feed must stay unauthenticated for calendar clients.
         labels = mkTraefikLabels {
           inherit subdomain;
           application = "ics-merger";
