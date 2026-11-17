@@ -12,7 +12,7 @@ in
 {
   my.services.adguardserver = {
     enable = true;
-    bind_hosts = [ "10.5.0.123" ];
+    bind_hosts = [ "10.5.10.147" ];
     openPorts = true;
     inherit httpPort;
   };
