@@ -1,0 +1,11 @@
+# Copy to terraform.tfvars and fill in. Values are in the OCI Console:
+# Profile menu -> Tenancy: <name> (tenancy OCID); region from the top bar.
+region       = "us-ashburn-1"
+tenancy_ocid = "ocid1.tenancy.oc1..CHANGE-ME"
+
+# ssh_public_key_path       = "~/.ssh/id_ed25519.pub"
+# ssh_allowed_cidr          = "203.0.113.7/32"
+# availability_domain_index = 1
+# ocpus     = 2
+# memory_gb = 12
+# home_dials_in = true
