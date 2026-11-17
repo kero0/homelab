@@ -180,6 +180,16 @@
         };
       };
 
-      checks = builtins.mapAttrs (_: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+      checks = builtins.mapAttrs (
+        system: deployLib:
+        deployLib.deployChecks (
+          self.deploy
+          // {
+            nodes = nixpkgs.lib.filterAttrs (
+              name: _: self.nixosConfigurations.${name}.pkgs.stdenv.hostPlatform.system == system
+            ) self.deploy.nodes;
+          }
+        )
+      ) deploy-rs.lib;
     };
 }
