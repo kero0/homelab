@@ -5,6 +5,7 @@
     port = 51820;
     publicKey = "eWJteanWAAZtFj1MokfA9+gfCqeA5doAfV2vuMZp61A=";
     endpoint = "163.192.192.83:51820";
+    loopback = "10.7.0.1";
     bypass = [
       "10.0.0.0/8"
       "192.168.0.0/16"

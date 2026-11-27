@@ -14,7 +14,7 @@ s=$(nix eval --impure --json --expr "let s = import $vpny/settings.nix; in {
   reachable = s.home.lan ++ [ s.clients.subnet ];
   ip = (import $dir/$name.nix).ip;
   inherit (s.clients) bypass;
-  tunnel = s.home.lan ++ [ s.clients.subnet ];
+  tunnel = s.home.lan ++ [ s.clients.subnet (s.clients.loopback + \"/32\") ];
 }")
 get() { jq -r "$1" <<<"$s"; }
 # dns only works if the tunnel carries it

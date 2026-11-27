@@ -132,6 +132,7 @@ in
         "network-online.target"
       ];
       wants = [ "network-online.target" ];
+      wantedBy = [ "systemd-networkd.service" ];
       path = [ pkgs.wireguard-tools ];
       serviceConfig.Type = "oneshot";
       script = lib.concatStringsSep "\n" (
@@ -177,6 +178,17 @@ in
         chain postrouting {
           type nat hook postrouting priority srcnat;
           ip saddr ${s.clients.subnet} oifname { "nord", "wg-home" } masquerade
+        }
+        # sidestore: what localdevvpn/em_proxy do on the phone. a connection to
+        # ${s.clients.loopback} goes back to the phone that made it, from ${s.clients.loopback},
+        # so the phone reaches its own lockdownd while the vpn is up
+        chain loopback {
+          type nat hook prerouting priority dstnat;
+          iifname "wg0" ip daddr ${s.clients.loopback} dnat ip to ip saddr
+        }
+        chain loopback-snat {
+          type nat hook postrouting priority srcnat;
+          oifname "wg0" ct original ip daddr ${s.clients.loopback} snat ip to ${s.clients.loopback}
         }
       '';
     };
